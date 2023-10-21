@@ -69,12 +69,18 @@ public class UpdateTeamsPacket implements MinecraftPacket {
                 .mode(UpdateMode.CREATE_TEAM)
                 .displayName(displayName)
                 .friendlyFlags(List.of(FriendlyFlag.CAN_HURT_FRIENDLY))
-                .nameTagVisibility(NameTagVisibility.ALWAYS)
+                .nameTagVisibility(isNametagPresent(prefix, suffix, plugin) ? NameTagVisibility.ALWAYS : NameTagVisibility.NEVER)
                 .collisionRule(CollisionRule.ALWAYS)
                 .color(getLastColor(prefix))
                 .prefix(prefix == null ? "" : prefix)
                 .suffix(suffix == null ? "" : suffix)
                 .entities(Arrays.asList(teamMembers));
+    }
+
+    private static boolean isNametagPresent(@Nullable String prefix, @Nullable String suffix, @NotNull Velocitab plugin) {
+        if (!plugin.getSettings().isRemoveNametags()) return true;
+
+        return prefix != null && !prefix.isEmpty() || suffix != null && !suffix.isEmpty();
     }
 
     @NotNull
@@ -85,7 +91,7 @@ public class UpdateTeamsPacket implements MinecraftPacket {
                 .mode(UpdateMode.UPDATE_INFO)
                 .displayName(teamName)
                 .friendlyFlags(List.of(FriendlyFlag.CAN_HURT_FRIENDLY))
-                .nameTagVisibility(NameTagVisibility.ALWAYS)
+                .nameTagVisibility(isNametagPresent(prefix, suffix, plugin) ? NameTagVisibility.ALWAYS : NameTagVisibility.NEVER)
                 .collisionRule(CollisionRule.ALWAYS)
                 .color(getLastColor(prefix))
                 .prefix(prefix == null ? "" : prefix)
